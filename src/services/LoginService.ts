@@ -1,5 +1,5 @@
-import { Logger } from 'common';
-import User from 'entities/User';
+import { Logger } from '../common';
+import User from '../entities/User';
 import UserService from './UserService';
 
 const logger = Logger(__filename);

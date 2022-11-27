@@ -1,4 +1,4 @@
-import { Logger } from 'common';
+import { Logger } from '../common';
 import ExerciseType from 'entities/ExerciseType';
 import { getConnection } from 'typeorm';
 

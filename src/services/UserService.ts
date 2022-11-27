@@ -1,5 +1,5 @@
 import bcrypt from 'bcrypt';
-import { Logger } from 'common';
+import { Logger } from '../common';
 import User from '../entities/User';
 import { getConnection } from 'typeorm';
 import ExerciseService from './ExerciseService';

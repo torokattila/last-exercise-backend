@@ -1,7 +1,7 @@
 import http from 'http';
 import { createConnection } from 'typeorm';
 import App from './app';
-import Logger from 'common/Logger';
+import Logger from './common/Logger';
 import config from './config';
 
 const logger = Logger(__filename);

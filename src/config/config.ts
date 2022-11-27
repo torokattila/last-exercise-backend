@@ -36,8 +36,11 @@ const config: any = {
     protocol: 'https',
     hostname: 'localhost',
     listenPort: 6060,
-    enabledOrigins: ['http://localhost:3000'],
-    clientUrl: '',
+    enabledOrigins: [
+      'http://localhost:3000',
+      'https://last-exercise.vercel.app',
+    ],
+    clientUrl: 'https://last-exercise.vercel.app',
   },
 };
 

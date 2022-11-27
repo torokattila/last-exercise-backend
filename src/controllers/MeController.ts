@@ -1,5 +1,4 @@
-import { PromiseRejectionHandler } from 'common';
-import User from 'entities/User';
+import { PromiseRejectionHandler } from '../common';
 import { Router, Request, Response } from 'express';
 import { StatusCodes } from 'http-status-codes';
 import UserService from '../services/UserService';

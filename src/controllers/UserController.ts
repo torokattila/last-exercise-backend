@@ -1,4 +1,4 @@
-import { Logger, PromiseRejectionHandler } from 'common';
+import { Logger, PromiseRejectionHandler } from '../common';
 import { Router, Request, Response } from 'express';
 import * as Yup from 'yup';
 import { validate as uuidValidate } from 'uuid';
