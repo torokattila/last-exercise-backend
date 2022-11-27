@@ -1,7 +1,7 @@
 import { Logger, PromiseRejectionHandler } from '../common';
 import { Router, Request, Response } from 'express';
 import * as Yup from 'yup';
-import { validate as uuidValidate } from 'uuid';
+// import { validate as uuidValidate } from 'uuid';
 import UserService from '../services/UserService';
 import { StatusCodes } from 'http-status-codes';
 
@@ -46,7 +46,7 @@ class UserController {
 
     const id = req.params.id;
 
-    if (!id || !uuidValidate(id)) throw new Error('invalid_path_parameters');
+    if (!id) throw new Error('invalid_path_parameters');
 
     try {
       const user = await UserService.findById(id);
@@ -76,7 +76,7 @@ class UserController {
 
     const id = req.params.id;
 
-    if (!id || !uuidValidate(id)) throw new Error('invalid_path_parameters');
+    if (!id) throw new Error('invalid_path_parameters');
 
     const editableUser = req.body;
 
@@ -105,7 +105,7 @@ class UserController {
 
     const id = req.params.id;
 
-    if (!id || !uuidValidate(id)) throw new Error('invalid_path_parameters');
+    if (!id) throw new Error('invalid_path_parameters');
 
     const { currentPassword, newPassword, newPasswordConfirm } = req.body;
 
@@ -156,7 +156,7 @@ class UserController {
 
     const id = req.params.id;
 
-    if (!id || !uuidValidate(id)) throw new Error('invalid_path_parameters');
+    if (!id) throw new Error('invalid_path_parameters');
 
     await UserService.remove(id);
 
@@ -175,7 +175,7 @@ class UserController {
     const exerciseId = req.body.exerciseId;
     const duration = req.body.duration;
 
-    if (!id || !uuidValidate(id)) throw new Error('invalid_path_parameters');
+    if (!id) throw new Error('invalid_path_parameters');
 
     try {
       await UpdateLastExerciseSchema.validate(req.body, { abortEarly: false });
