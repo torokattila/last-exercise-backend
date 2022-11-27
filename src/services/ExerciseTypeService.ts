@@ -1,5 +1,5 @@
 import { Logger } from '../common';
-import ExerciseType from 'entities/ExerciseType';
+import ExerciseType from '../entities/ExerciseType';
 import { getConnection } from 'typeorm';
 
 const logger = Logger(__filename);
