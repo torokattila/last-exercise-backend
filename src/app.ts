@@ -2,7 +2,7 @@ import express, { Application } from 'express';
 import morgan from 'morgan';
 import config from './config';
 import cors from 'cors';
-import { authenticate } from 'middlewares/Authenticate';
+import { authenticate } from './middlewares/Authenticate';
 import RegistrationController from './controllers/RegistrationController';
 import LoginController from './controllers/LoginController';
 import MeController from './controllers/MeController';
