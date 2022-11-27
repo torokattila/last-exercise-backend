@@ -1,7 +1,7 @@
 import { Logger, PromiseRejectionHandler } from '../common';
 import { Router, Request, Response } from 'express';
 import { StatusCodes } from 'http-status-codes';
-import ExerciseService from 'services/ExerciseService';
+import ExerciseService from '../services/ExerciseService';
 import * as Yup from 'yup';
 import { validate as uuidValidate } from 'uuid';
 
