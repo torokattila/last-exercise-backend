@@ -3,9 +3,11 @@ import { Logger } from 'common';
 import User from '../entities/User';
 import { getConnection } from 'typeorm';
 import ExerciseService from './ExerciseService';
+import Exercise from '../entities/Exercise';
 
 const logger = Logger(__filename);
 const getUserRepository = () => getConnection().getRepository(User);
+const getExerciseRepository = () => getConnection().getRepository(Exercise);
 
 const findByEmail = async (email: string) => {
   try {
@@ -34,6 +36,28 @@ const findById = async (userId: string): Promise<User> => {
 
     const user = await queryBuilder.getOne();
     delete user.password;
+
+    if (user.exerciseHistory && user.exerciseHistory.length > 0) {
+      const exerciseIds = user.exerciseHistory.map(
+        (history) => history.exerciseId
+      );
+
+      const exercises = await getExerciseRepository()
+        .createQueryBuilder('exercise')
+        .where('exercise.id IN (:...ids)', { ids: exerciseIds })
+        .getMany();
+
+      user.exerciseHistory = user.exerciseHistory.map((history) => {
+        const exercise = exercises.find(
+          (exercise) => exercise.id === history.exerciseId
+        );
+
+        return {
+          ...history,
+          exercise,
+        };
+      });
+    }
 
     return Promise.resolve(user);
   } catch (error: any) {
