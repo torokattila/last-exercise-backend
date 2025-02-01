@@ -28,4 +28,7 @@ export default class User extends EntityBase {
 
   @Column({ name: 'last_exercise_id', nullable: true })
   lastExerciseId: string;
+
+  @Column({ type: 'jsonb', nullable: true, default: () => "'[]'" })
+  exerciseHistory: { date: string; exerciseId: string }[];
 }

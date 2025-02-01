@@ -1,5 +1,5 @@
 import bcrypt from 'bcrypt';
-import { Logger } from '../common';
+import { Logger } from 'common';
 import User from '../entities/User';
 import { getConnection } from 'typeorm';
 import ExerciseService from './ExerciseService';
@@ -99,12 +99,23 @@ const updateLastExercise = async (
     const foundUser = await getUserRepository().findOne({
       where: { id: userId },
     });
+
+    if (!foundUser) throw new Error('User not found');
+
     foundUser.modified = new Date();
     foundUser.lastExerciseId = exerciseId;
+
     const foundExercise = await ExerciseService.findById(exerciseId);
     foundExercise.duration = duration;
 
     await ExerciseService.update(foundExercise);
+
+    // Update exercise history
+    const today = new Date().toISOString().split('T')[0]; // YYYY-MM-DD
+    foundUser.exerciseHistory = [
+      ...(foundUser.exerciseHistory ?? []),
+      { date: today, exerciseId },
+    ];
 
     const savedUser = await save(foundUser);
 
@@ -113,6 +124,17 @@ const updateLastExercise = async (
     logger.error(`Update last exercise failed in UserService, error: ${error}`);
     throw new Error(error);
   }
+};
+
+const getUserExerciseHistory = async (userId: string) => {
+  const user = await getUserRepository().findOne({
+    where: { id: userId },
+    select: ['exerciseHistory'],
+  });
+
+  if (!user) throw new Error('User not found');
+
+  return user.exerciseHistory;
 };
 
 const remove = async (id: string): Promise<void> => {
@@ -160,4 +182,5 @@ export default {
   generateHash,
   verifyPassword,
   validatePasswordMatch,
+  getUserExerciseHistory,
 };
