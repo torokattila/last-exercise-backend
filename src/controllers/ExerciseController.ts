@@ -3,7 +3,7 @@ import { Router, Request, Response } from 'express';
 import { StatusCodes } from 'http-status-codes';
 import ExerciseService from '../services/ExerciseService';
 import * as Yup from 'yup';
-// import { validate as uuidValidate } from 'uuid';
+import { validate as uuidValidate } from 'uuid';
 
 const logger = Logger(__filename);
 
@@ -54,7 +54,7 @@ class ExerciseController {
 
     const id = req.params.id;
 
-    if (!id) throw new Error('invalid_path_parameters');
+    if (!id || !uuidValidate(id)) throw new Error('invalid_path_parameters');
 
     try {
       const exercise = await ExerciseService.findById(id);
@@ -100,7 +100,7 @@ class ExerciseController {
 
     const id = req.params.id;
 
-    if (!id) throw new Error('invalid_path_parameters');
+    if (!id || !uuidValidate(id)) throw new Error('invalid_path_parameters');
 
     const editableExercise = req.body;
 
@@ -125,7 +125,7 @@ class ExerciseController {
 
     const id = req.params.id;
 
-    if (!id) throw new Error('invalid_path_parameters');
+    if (!id || !uuidValidate(id)) throw new Error('invalid_path_parameters');
 
     try {
       await ExerciseService.remove(id);
