@@ -1,14 +1,15 @@
+import cors from 'cors';
 import express, { Application } from 'express';
 import morgan from 'morgan';
 import config from './config';
-import cors from 'cors';
-import { authenticate } from './middlewares/Authenticate';
-import RegistrationController from './controllers/RegistrationController';
-import LoginController from './controllers/LoginController';
-import MeController from './controllers/MeController';
-import UserController from './controllers/UserController';
 import ExerciseController from './controllers/ExerciseController';
 import ExerciseTypeController from './controllers/ExerciseTypeController';
+import HealthController from './controllers/HealthController';
+import LoginController from './controllers/LoginController';
+import MeController from './controllers/MeController';
+import RegistrationController from './controllers/RegistrationController';
+import UserController from './controllers/UserController';
+import { authenticate } from './middlewares/Authenticate';
 
 class App {
   public express: Application;
@@ -24,6 +25,7 @@ class App {
   }
 
   private routes() {
+    this.express.use('/health', HealthController);
     this.express.use('/register', RegistrationController);
     this.express.use('/login', LoginController);
     this.express.use('/me', authenticate, MeController);
