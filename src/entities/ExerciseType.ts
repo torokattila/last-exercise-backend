@@ -15,7 +15,7 @@ export default class ExerciseType extends EntityBase {
   exercise: Exercise;
 
   @Column({ name: 'exercise_id' })
-  exerciseId: string;
+  exerciseId: number;
 
   @Column({ name: 'series_card_number', nullable: true })
   seriesCardNumber: number;

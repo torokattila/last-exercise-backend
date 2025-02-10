@@ -1,8 +1,8 @@
+import { randomInt } from "crypto";
+import { getConnection } from 'typeorm';
 import { Logger } from '../common';
 import Exercise from '../entities/Exercise';
-import { getConnection } from 'typeorm';
 import ExerciseTypeService from './ExerciseTypeService';
-import { v4 as uuidv4 } from 'uuid';
 
 const logger = Logger(__filename);
 const getExerciseRepository = () => getConnection().getRepository(Exercise);
@@ -28,7 +28,7 @@ const create = async (exercise: Partial<Exercise>): Promise<Exercise> => {
   }
 };
 
-const findById = async (id: string): Promise<Exercise> => {
+const findById = async (id: number): Promise<Exercise> => {
   try {
     const queryBuilder = getExerciseRepository().createQueryBuilder('exercise');
     queryBuilder.leftJoinAndSelect('exercise.exerciseTypes', 'exerciseTypes');
@@ -64,7 +64,7 @@ const update = async (exercise: Partial<Exercise>): Promise<Exercise> => {
       for (const type of exercise.exerciseTypes) {
         if (!type.id) {
           const newType = type;
-          newType.id = uuidv4();
+          newType.id = randomInt(100000000, 2147483647);
 
           await ExerciseTypeService.create(type);
         } else {

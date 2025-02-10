@@ -1,8 +1,7 @@
-import { Logger, PromiseRejectionHandler } from '../common';
-import { Router, Request, Response } from 'express';
+import { Request, Response, Router } from 'express';
 import { StatusCodes } from 'http-status-codes';
+import { Logger, PromiseRejectionHandler } from '../common';
 import ExerciseTypeService from '../services/ExerciseTypeService';
-import { validate as uuidValidate } from 'uuid';
 
 const logger = Logger(__filename);
 
@@ -30,7 +29,7 @@ class ExerciseTypeController {
 
     const id = req.params.id;
 
-    if (!id || !uuidValidate(id)) throw new Error('invalid_path_parameters');
+    if (!id) throw new Error('invalid_path_parameters');
 
     try {
       await ExerciseTypeService.remove(id);

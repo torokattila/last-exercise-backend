@@ -1,7 +1,7 @@
-import { Logger, PromiseRejectionHandler } from '../common';
-import { Router, Request, Response } from 'express';
+import { Request, Response, Router } from 'express';
 import { StatusCodes } from 'http-status-codes';
 import { sign } from 'jsonwebtoken';
+import { Logger, PromiseRejectionHandler } from '../common';
 import UserService from '../services/UserService';
 
 const logger = Logger(__filename);

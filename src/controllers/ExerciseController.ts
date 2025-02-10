@@ -1,9 +1,8 @@
-import { Logger, PromiseRejectionHandler } from '../common';
-import { Router, Request, Response } from 'express';
+import { Request, Response, Router } from 'express';
 import { StatusCodes } from 'http-status-codes';
-import ExerciseService from '../services/ExerciseService';
 import * as Yup from 'yup';
-import { validate as uuidValidate } from 'uuid';
+import { Logger, PromiseRejectionHandler } from '../common';
+import ExerciseService from '../services/ExerciseService';
 
 const logger = Logger(__filename);
 
@@ -54,10 +53,10 @@ class ExerciseController {
 
     const id = req.params.id;
 
-    if (!id || !uuidValidate(id)) throw new Error('invalid_path_parameters');
+    if (!id) throw new Error('invalid_path_parameters');
 
     try {
-      const exercise = await ExerciseService.findById(id);
+      const exercise = await ExerciseService.findById(Number(id));
 
       if (exercise) {
         logger.info(`GET /exercises/${id} status code: ${StatusCodes.OK}`);
@@ -100,7 +99,7 @@ class ExerciseController {
 
     const id = req.params.id;
 
-    if (!id || !uuidValidate(id)) throw new Error('invalid_path_parameters');
+    if (!id) throw new Error('invalid_path_parameters');
 
     const editableExercise = req.body;
 
@@ -125,7 +124,7 @@ class ExerciseController {
 
     const id = req.params.id;
 
-    if (!id || !uuidValidate(id)) throw new Error('invalid_path_parameters');
+    if (!id) throw new Error('invalid_path_parameters');
 
     try {
       await ExerciseService.remove(id);

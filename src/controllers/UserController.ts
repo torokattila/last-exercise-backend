@@ -1,9 +1,8 @@
-import { Logger, PromiseRejectionHandler } from '../common';
-import { Router, Request, Response } from 'express';
-import * as Yup from 'yup';
-import { validate as uuidValidate } from 'uuid';
-import UserService from '../services/UserService';
+import { Request, Response, Router } from 'express';
 import { StatusCodes } from 'http-status-codes';
+import * as Yup from 'yup';
+import { Logger, PromiseRejectionHandler } from '../common';
+import UserService from '../services/UserService';
 
 const logger = Logger(__filename);
 
@@ -46,7 +45,7 @@ class UserController {
 
     const id = req.params.id;
 
-    if (!id || !uuidValidate(id)) throw new Error('invalid_path_parameters');
+    if (!id) throw new Error('invalid_path_parameters');
 
     try {
       const user = await UserService.findById(id);
@@ -76,7 +75,7 @@ class UserController {
 
     const id = req.params.id;
 
-    if (!id || !uuidValidate(id)) throw new Error('invalid_path_parameters');
+    if (!id) throw new Error('invalid_path_parameters');
 
     const editableUser = req.body;
 
@@ -105,7 +104,7 @@ class UserController {
 
     const id = req.params.id;
 
-    if (!id || !uuidValidate(id)) throw new Error('invalid_path_parameters');
+    if (!id) throw new Error('invalid_path_parameters');
 
     const { currentPassword, newPassword, newPasswordConfirm } = req.body;
 
@@ -141,7 +140,7 @@ class UserController {
       });
     }
 
-    const result = await UserService.updatePassword(id, newPassword);
+    const result = await UserService.updatePassword(Number(id), newPassword);
 
     logger.info(
       `PUT /users/${id}/password/update status code: ${StatusCodes.OK}`
@@ -156,9 +155,9 @@ class UserController {
 
     const id = req.params.id;
 
-    if (!id || !uuidValidate(id)) throw new Error('invalid_path_parameters');
+    if (!id) throw new Error('invalid_path_parameters');
 
-    await UserService.remove(id);
+    await UserService.remove(Number(id));
 
     logger.info(`DELETE /users/${id} status code: ${StatusCodes.NO_CONTENT}`);
     return res.sendStatus(StatusCodes.NO_CONTENT);
@@ -175,7 +174,7 @@ class UserController {
     const exerciseId = req.body.exerciseId;
     const duration = req.body.duration;
 
-    if (!id || !uuidValidate(id)) throw new Error('invalid_path_parameters');
+    if (!id) throw new Error('invalid_path_parameters');
 
     try {
       await UpdateLastExerciseSchema.validate(req.body, { abortEarly: false });
@@ -186,9 +185,9 @@ class UserController {
     }
 
     const updatedUser = await UserService.updateLastExercise(
-      id,
+      Number(id),
       exerciseId,
-      duration,
+      duration
     );
 
     logger.info(`PUT /users/${id}/lastexercise status code ${StatusCodes.OK}`);

@@ -94,7 +94,7 @@ const save = async (user: User): Promise<User> => {
 };
 
 const updatePassword = async (
-  id: string,
+  id: number,
   newPassword: string
 ): Promise<User> => {
   try {
@@ -115,8 +115,8 @@ const updatePassword = async (
 };
 
 const updateLastExercise = async (
-  userId: string,
-  exerciseId: string,
+  userId: number,
+  exerciseId: number,
   duration: string
 ): Promise<User> => {
   try {
@@ -138,7 +138,7 @@ const updateLastExercise = async (
     const today = new Date().toISOString().split('T')[0]; // YYYY-MM-DD
     foundUser.exerciseHistory = [
       ...(foundUser.exerciseHistory ?? []),
-      { date: today, exerciseId },
+      { date: today, exerciseId: Number(exerciseId) },
     ];
 
     const savedUser = await save(foundUser);
@@ -150,7 +150,7 @@ const updateLastExercise = async (
   }
 };
 
-const getUserExerciseHistory = async (userId: string) => {
+const getUserExerciseHistory = async (userId: number) => {
   const user = await getUserRepository().findOne({
     where: { id: userId },
     select: ['exerciseHistory'],
@@ -161,7 +161,7 @@ const getUserExerciseHistory = async (userId: string) => {
   return user.exerciseHistory;
 };
 
-const remove = async (id: string): Promise<void> => {
+const remove = async (id: number): Promise<void> => {
   try {
     await getUserRepository().delete(id);
   } catch (error: any) {
