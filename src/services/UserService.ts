@@ -1,9 +1,9 @@
 import bcrypt from 'bcrypt';
-import { Logger } from '../common';
-import User from '../entities/User';
 import { getConnection } from 'typeorm';
-import ExerciseService from './ExerciseService';
+import { Logger } from '../common';
 import Exercise from '../entities/Exercise';
+import User from '../entities/User';
+import ExerciseService from './ExerciseService';
 
 const logger = Logger(__filename);
 const getUserRepository = () => getConnection().getRepository(User);
@@ -47,16 +47,24 @@ const findById = async (userId: string): Promise<User> => {
         .where('exercise.id IN (:...ids)', { ids: exerciseIds })
         .getMany();
 
-      user.exerciseHistory = user.exerciseHistory.map((history) => {
-        const exercise = exercises.find(
-          (exercise) => exercise.id === history.exerciseId
-        );
+      user.exerciseHistory = user.exerciseHistory
+        .map((history) => {
+          const exercise = exercises.find(
+            (exercise) => exercise.id === history.exerciseId
+          );
 
-        return {
-          ...history,
-          exercise,
-        };
-      });
+          return {
+            ...history,
+            exercise,
+          };
+        })
+        .filter(
+          (value, index, self) =>
+            self.findIndex(
+              (item) =>
+                item.date === value.date && item.exerciseId === value.exerciseId
+            ) === index
+        );
     }
 
     return Promise.resolve(user);
