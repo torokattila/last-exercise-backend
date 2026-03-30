@@ -29,18 +29,22 @@ class UserController {
     this.router.put('/:id', PromiseRejectionHandler(this.updateUser));
     this.router.put(
       '/:id/password/update',
-      PromiseRejectionHandler(this.updatePassword)
+      PromiseRejectionHandler(this.updatePassword),
     );
     this.router.put(
       '/:id/lastexercise',
-      PromiseRejectionHandler(this.updateLastExercise)
+      PromiseRejectionHandler(this.updateLastExercise),
     );
     this.router.delete('/:id', PromiseRejectionHandler(this.deleteUser));
+    this.router.delete(
+      '/:id/history/:exerciseId',
+      PromiseRejectionHandler(this.deleteFromExerciseHistory),
+    );
   }
 
   private async getUser(req: Request, res: Response) {
     logger.info(
-      `GET /users/:id called, id param: ${JSON.stringify(req.params.id)}`
+      `GET /users/:id called, id param: ${JSON.stringify(req.params.id)}`,
     );
 
     const id = req.params.id;
@@ -69,8 +73,8 @@ class UserController {
   private async updateUser(req: Request, res: Response) {
     logger.info(
       `PUT /users/:id called, id param: ${JSON.stringify(
-        req.params.id
-      )}, body: ${JSON.stringify(req.body)}`
+        req.params.id,
+      )}, body: ${JSON.stringify(req.body)}`,
     );
 
     const id = req.params.id;
@@ -98,8 +102,8 @@ class UserController {
   private async updatePassword(req: Request, res: Response) {
     logger.info(
       `PUT /users/:id/password/update called, id param: ${JSON.stringify(
-        req.params.id
-      )}`
+        req.params.id,
+      )}`,
     );
 
     const id = req.params.id;
@@ -112,7 +116,7 @@ class UserController {
       const userByEmail = await UserService.findByEmail(req.user.email);
       const isValidPassword = await UserService.comparePassword(
         currentPassword,
-        userByEmail.password
+        userByEmail.password,
       );
 
       if (!isValidPassword) {
@@ -143,14 +147,14 @@ class UserController {
     const result = await UserService.updatePassword(Number(id), newPassword);
 
     logger.info(
-      `PUT /users/${id}/password/update status code: ${StatusCodes.OK}`
+      `PUT /users/${id}/password/update status code: ${StatusCodes.OK}`,
     );
     return res.status(StatusCodes.OK).send(result);
   }
 
   private async deleteUser(req: Request, res: Response) {
     logger.info(
-      `DELETE /users/:id called, id param: ${JSON.stringify(req.params.id)}`
+      `DELETE /users/:id called, id param: ${JSON.stringify(req.params.id)}`,
     );
 
     const id = req.params.id;
@@ -166,8 +170,8 @@ class UserController {
   private async updateLastExercise(req: Request, res: Response) {
     logger.info(
       `PUT /users/:id/lastexercise called, id param: ${JSON.stringify(
-        req.params.id
-      )}, body: ${JSON.stringify(req.body)}`
+        req.params.id,
+      )}, body: ${JSON.stringify(req.body)}`,
     );
 
     const id = req.params.id;
@@ -187,11 +191,34 @@ class UserController {
     const updatedUser = await UserService.updateLastExercise(
       Number(id),
       exerciseId,
-      duration
+      duration,
     );
 
     logger.info(`PUT /users/${id}/lastexercise status code ${StatusCodes.OK}`);
     return res.status(StatusCodes.OK).send(updatedUser);
+  }
+
+  private async deleteFromExerciseHistory(req: Request, res: Response) {
+    logger.info(
+      `DELETE /users/:id/history/:exerciseId called, id param: ${JSON.stringify(req.params.id)}, 
+      exerciseId param: ${JSON.stringify(req.params.exerciseId)}`,
+    );
+    const id = req.params.id;
+    const exerciseId = req.params.exerciseId;
+    const { date } = req.body;
+    if (!id || !exerciseId) throw new Error('invalid_path_parameters');
+    if (!date) throw new Error('date_is_required');
+
+    await UserService.removeFromExerciseHistory(
+      Number(id),
+      Number(exerciseId),
+      date,
+    );
+
+    logger.info(
+      `DELETE /users/${id}/history/${exerciseId} status code: ${StatusCodes.NO_CONTENT}`,
+    );
+    return res.sendStatus(StatusCodes.NO_CONTENT);
   }
 }
 

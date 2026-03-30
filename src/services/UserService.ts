@@ -30,7 +30,7 @@ const findById = async (userId: string): Promise<User> => {
     queryBuilder.leftJoinAndSelect('user.lastExercise', 'lastExercise');
     queryBuilder.leftJoinAndSelect(
       'lastExercise.exerciseTypes',
-      'lastExerciseTypes'
+      'lastExerciseTypes',
     );
     queryBuilder.andWhere('user.id = :id', { id: userId });
 
@@ -39,7 +39,7 @@ const findById = async (userId: string): Promise<User> => {
 
     if (user.exerciseHistory && user.exerciseHistory.length > 0) {
       const exerciseIds = user.exerciseHistory.map(
-        (history) => history.exerciseId
+        (history) => history.exerciseId,
       );
 
       const exercises = await getExerciseRepository()
@@ -50,7 +50,7 @@ const findById = async (userId: string): Promise<User> => {
       user.exerciseHistory = user.exerciseHistory
         .map((history) => {
           const exercise = exercises.find(
-            (exercise) => exercise.id === history.exerciseId
+            (exercise) => exercise.id === history.exerciseId,
           );
 
           return {
@@ -62,8 +62,9 @@ const findById = async (userId: string): Promise<User> => {
           (value, index, self) =>
             self.findIndex(
               (item) =>
-                item.date === value.date && item.exerciseId === value.exerciseId
-            ) === index
+                item.date === value.date &&
+                item.exerciseId === value.exerciseId,
+            ) === index,
         );
     }
 
@@ -103,7 +104,7 @@ const save = async (user: User): Promise<User> => {
 
 const updatePassword = async (
   id: number,
-  newPassword: string
+  newPassword: string,
 ): Promise<User> => {
   try {
     const foundUser = await getUserRepository().findOne({
@@ -125,7 +126,7 @@ const updatePassword = async (
 const updateLastExercise = async (
   userId: number,
   exerciseId: number,
-  duration: string
+  duration: string,
 ): Promise<User> => {
   try {
     const foundUser = await getUserRepository().findOne({
@@ -178,9 +179,48 @@ const remove = async (id: number): Promise<void> => {
   }
 };
 
+const removeFromExerciseHistory = async (
+  userId: number,
+  exerciseId: number,
+  date: string,
+): Promise<void> => {
+  const user = await getUserRepository().findOne({
+    where: { id: userId },
+    select: ['exerciseHistory', 'lastExerciseId'],
+  });
+
+  if (!user) throw new Error('User not found');
+
+  const history = user.exerciseHistory ?? [];
+
+  const foundHistory = history.find(
+    (exercise) => exercise.exerciseId === exerciseId && exercise.date === date,
+  );
+
+  if (!foundHistory) throw new Error('Exercise not found in user history');
+
+  const updatedHistory = history.filter(
+    (exercise) =>
+      !(exercise.exerciseId === exerciseId && exercise.date === date),
+  );
+
+  const updatePayload: Partial<User> = { exerciseHistory: updatedHistory };
+
+  if (updatedHistory.length === 0) {
+    updatePayload.lastExerciseId = null;
+  } else if (exerciseId === user.lastExerciseId) {
+    const sorted = [...updatedHistory].sort((a, b) =>
+      b.date.localeCompare(a.date),
+    );
+    updatePayload.lastExerciseId = sorted[0].exerciseId;
+  }
+
+  await getUserRepository().update(userId, updatePayload);
+};
+
 const comparePassword = async (
   password1: string,
-  password2: string
+  password2: string,
 ): Promise<boolean> => {
   return await bcrypt.compare(password1, password2);
 };
@@ -191,7 +231,7 @@ const generateHash = async (hashBase: string) => {
 
 const verifyPassword = async (
   password1: string,
-  password2: string
+  password2: string,
 ): Promise<boolean> => {
   return await bcrypt.compare(password1, password2);
 };
@@ -215,4 +255,5 @@ export default {
   verifyPassword,
   validatePasswordMatch,
   getUserExerciseHistory,
+  removeFromExerciseHistory,
 };
