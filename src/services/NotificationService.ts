@@ -6,8 +6,12 @@ const logger = Logger(__filename);
 if (!admin.apps.length) {
   const serviceAccountKey = process.env.FIREBASE_SERVICE_ACCOUNT_KEY;
   if (serviceAccountKey) {
+    const normalized = serviceAccountKey
+      .replace(/^"|"$/g, '')   // strip outer quotes if present
+      .replace(/\\"/g, '"')    // unescape \" → " (dotenv leaves these as-is)
+      .replace(/\\\n/g, '\\n'); // fix \+newline → \n (dotenv converts \\n to \+LF)
     admin.initializeApp({
-      credential: admin.credential.cert(JSON.parse(serviceAccountKey)),
+      credential: admin.credential.cert(JSON.parse(normalized)),
     });
   } else {
     logger.warn('FIREBASE_SERVICE_ACCOUNT_KEY is not set. Push notifications will not work.');
