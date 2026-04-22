@@ -18,3 +18,5 @@ coverage
 yarn-error.log
 
 *.pk
+
+last-exercise-firebase-adminsdk*.json
