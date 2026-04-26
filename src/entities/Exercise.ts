@@ -32,4 +32,10 @@ export default class Exercise extends EntityBase {
 
   @Column({ name: 'order', default: 1 })
   order: number;
+
+  @Column({ name: 'interval_notification_time', nullable: true })
+  intervalNotificationTime: string;
+
+  @Column({ name: 'use_interval_timer', nullable: true })
+  useIntervalTimer: boolean;
 }

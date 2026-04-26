@@ -242,6 +242,15 @@ const validatePasswordMatch = (password: string, passwordConfirm: string) => {
   return true;
 };
 
+const saveFcmToken = async (userId: string, fcmToken: string): Promise<void> => {
+  try {
+    await getUserRepository().update(userId, { fcmToken });
+  } catch (error: any) {
+    logger.error(`Save FCM token failed in UserService, error: ${error}`);
+    throw new Error(error);
+  }
+};
+
 export default {
   findByEmail,
   findById,
@@ -256,4 +265,5 @@ export default {
   validatePasswordMatch,
   getUserExerciseHistory,
   removeFromExerciseHistory,
+  saveFcmToken,
 };
